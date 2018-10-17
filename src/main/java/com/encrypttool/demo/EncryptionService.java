@@ -15,20 +15,6 @@ import java.io.ObjectOutputStream;
 
 @Service
 public class EncryptionService {
-    private static byte[] keyByte;
-//    private final ConfigurationService configurationService;
-//ConfigurationService configurationService
-    @Autowired
-    public EncryptionService() {
-//        this.configurationService = configurationService;
-    }
-
-    @PostConstruct
-    void init() {
-//        String keyStr = configurationService.get("encryptionKey", "Bar12345Bar12345");
-        String keyStr = "Bar12345Bar12345";
-        keyByte = keyStr.getBytes();
-    }
 
     @SneakyThrows
     public static byte[] serialize(Object obj) {
@@ -46,10 +32,10 @@ public class EncryptionService {
     }
 
     @SneakyThrows
-    public static byte[] encrypt(byte[] content) {
+    public static byte[] encrypt(byte[] content, String key) {
         byte[] encrypted;
         try {
-            SecretKeySpec secretKeySpec = new SecretKeySpec(keyByte, "AES");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             byte[] iv = new byte[cipher.getBlockSize()];
             IvParameterSpec ivParams = new IvParameterSpec(iv);
@@ -63,10 +49,10 @@ public class EncryptionService {
     }
 
     @SneakyThrows
-    public static byte[] decrypt(byte[] content) {
+    public static byte[] decrypt(byte[] content, String key) {
         byte[] decrypted;
         try {
-            SecretKeySpec secretKeySpec = new SecretKeySpec(keyByte, "AES");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             byte[] ivByte = new byte[cipher.getBlockSize()];
             IvParameterSpec ivParamsSpec = new IvParameterSpec(ivByte);
